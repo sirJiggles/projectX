@@ -1,0 +1,12 @@
+{
+  "name": "projectX",
+  "version": "1.0.0",
+  "description": "main entry point for the app",
+  "main": "index.js",
+  "scripts": {
+    "start": "(cd ./server && yarn start) & (cd ./client && yarn start)"
+  },
+  "repository": "git@github.com:sirJiggles/projectX.git",
+  "author": "Gareth Fuller <gareth-fuller@hotmail.co.uk>",
+  "license": "MIT"
+}
