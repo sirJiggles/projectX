@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Button, Text, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
+import colors from '../../ui/colors';
 
 export default class ChatLoading extends Component {
   render() {
