@@ -14,7 +14,7 @@ export default function Quote() {
             >
               <Text>Click me!</Text>
             </Button>
-            <Text>Quote: {result.data}</Text>
+            <Text style={styles.quote}>Quote: {result.data}</Text>
           </View>
         );
       }}
@@ -25,5 +25,9 @@ export default function Quote() {
 const styles = StyleSheet.create({
   button: {
     flexDirection: 'column'
+  },
+  quote: {
+    fontStyle: 'italic',
+    fontSize: 20
   }
 });
