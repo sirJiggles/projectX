@@ -1,41 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks';
+import Application from './components/app/Application';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql'
+});
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Gareth rocks!</Text>
-      <View style={styles.button}>
-        <Button
-          title="click to get data from api"
-          onPress={() => {
-            fetch('http://localhost:4000/graphql', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-              },
-              body: JSON.stringify({ query: '{ random }' })
-            })
-              .then(r => r.json())
-              .then(data => console.log('data returned:', data));
-          }}
-        >
-          Click me!
-        </Button>
-      </View>
-    </View>
+    <ApolloProvider client={client}>
+      <Application />
+    </ApolloProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  button: {
-    flexDirection: 'row'
-  }
-});
