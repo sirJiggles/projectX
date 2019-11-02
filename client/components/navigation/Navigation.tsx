@@ -1,25 +1,23 @@
 import Home from '../home/Home';
+import Chat from '../chat/Chat';
+import ChatLoading from '../chat-loading/ChatLoading';
 import React from 'react';
-import { Text, View, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
 
-class ChatScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Chat!</Text>
-      </View>
-    );
-  }
-}
+const ChatStack = createStackNavigator({
+  ChatLoading,
+  Chat
+});
 
 const TabNavigator = createBottomTabNavigator(
   {
     Home,
-    Chat: ChatScreen
+    ChatStack
   },
   {
     defaultNavigationOptions: ({ navigation }) => ({
@@ -31,7 +29,7 @@ const TabNavigator = createBottomTabNavigator(
           // Sometimes we want to add badges to some icons.
           // You can check the implementation below.
           // IconComponent = HomeIconWithBadge;
-        } else if (routeName === 'Chat') {
+        } else if (routeName === 'ChatStack') {
           iconName = 'chatbubbles';
         }
 
