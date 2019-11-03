@@ -1,5 +1,6 @@
 import Home from '../home/Home';
 import Chat from '../chat/Chat';
+import RegOrLogin from '../user/RegOrLogin';
 import ChatLoading from '../chat-loading/ChatLoading';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -17,6 +18,7 @@ const ChatStack = createStackNavigator({
 const TabNavigator = createBottomTabNavigator(
   {
     Home,
+    RegOrLogin,
     ChatStack
   },
   {
@@ -31,9 +33,12 @@ const TabNavigator = createBottomTabNavigator(
           // IconComponent = HomeIconWithBadge;
         } else if (routeName === 'ChatStack') {
           iconName = 'chatbubbles';
+        } else if (routeName === 'RegOrLogin') {
+          iconName = 'log-in';
         }
 
         // iconName = focused ? iconName : `${iconName}-outline`;
+
         iconName = Platform.OS === 'ios' ? `ios-${iconName}` : `md-${iconName}`;
 
         // You can return any component that you like here!
