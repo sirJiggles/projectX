@@ -11,6 +11,6 @@ const messageSchema = new mongoose.Schema({
   }
 });
 
-const post = mongoose.model('message', messageSchema);
+const message = mongoose.model('message', messageSchema);
 
 export default message;
