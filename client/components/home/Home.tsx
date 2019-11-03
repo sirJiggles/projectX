@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Quote from '../quote/Quote';
 
-export default class Application extends Component {
+export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
