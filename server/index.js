@@ -1,39 +1,50 @@
-var express = require('express');
-var cors = require('cors');
-var graphqlHTTP = require('express-graphql');
-var { buildSchema } = require('graphql');
+import cors from 'cors';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 
-// Construct a schema, using GraphQL schema language
-var schema = buildSchema(`
-  type Query {
-    quoteOfTheDay: String
-    random: Float!
-    rollThreeDice: [Int]
-  }
-`);
+import schemas from './schemas';
+import resolvers from './resolvers';
 
-// The root provides a resolver function for each API endpoint
-var root = {
-  quoteOfTheDay: () => {
-    return Math.random() < 0.5 ? 'Gsus walks' : 'Salvation lies within';
-  },
-  random: () => {
-    return Math.random();
-  },
-  rollThreeDice: () => {
-    return [1, 2, 3].map(_ => 1 + Math.floor(Math.random() * 6));
+import userModel from './models/User';
+import messageModel from './models/Message';
+
+const app = express();
+app.use(cors());
+
+const getUser = async req => {
+  const token = req.headers['token'];
+
+  if (token) {
+    try {
+      return await jwt.verify(token, 'riddlemethis');
+    } catch (e) {
+      throw new AuthenticationError('Your session expired. Sign in again.');
+    }
   }
 };
 
-var app = express();
-app.use(cors());
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-  })
-);
-app.listen(4000);
-console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+const server = new ApolloServer({
+  typeDefs: schemas,
+  resolvers,
+  context: async ({ req }) => {
+    if (req) {
+      const me = await getUser(req);
+
+      return {
+        me,
+        models: {
+          userModel,
+          messageModel
+        }
+      };
+    }
+  }
+});
+
+server.applyMiddleware({ app, path: '/graphql' });
+
+app.listen(5000, () => {
+  mongoose.connect('mongodb://localhost:27017/graphql');
+});
