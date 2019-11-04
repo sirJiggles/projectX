@@ -6,6 +6,7 @@
   "author": "Gareth Fuller",
   "license": "MIT",
   "scripts": {
+    "mongo": "mongod --dbpath ~/data/",
     "start": "nodemon --exec babel-node index.js"
   },
   "dependencies": {

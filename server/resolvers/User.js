@@ -11,6 +11,12 @@ export default {
       const user = await userModel.findById({ _id: id }).exec();
       return user;
     },
+    currentUser: (parent, args, { models: { userModel }, me }, info) => {
+      if (!me) {
+        return null;
+      }
+      return me;
+    },
     login: async (
       parent,
       { name, password },

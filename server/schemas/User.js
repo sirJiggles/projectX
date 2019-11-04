@@ -13,6 +13,7 @@ export default gql`
 
   extend type Query {
     user(id: ID!): User!
+    currentUser: User
     login(name: String!, password: String!): Token!
   }
 

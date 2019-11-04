@@ -1,72 +1,95 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Platform } from 'react-native';
 import { Input, Divider, Card } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
+import GetLogin from './GetLogin';
 
-export default class RegOrLogin extends Component {
-  state: {
-    username: '';
-    password: '';
-  };
-
-  // @TODO make this send a mutation on up to register a user with apollo
-  register() {
-    console.log('will register with ');
-    console.log(this.state);
+const REGISTER = gql`
+  mutation Register($name: String!, $password: String!) {
+    createUser(name: $name, password: $password) {
+      id
+    }
   }
+`;
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Card>
+export default function RegOrLogin() {
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [register, { data, loading, error }] = useMutation(REGISTER);
+  return (
+    <View style={styles.container}>
+      <Card wrapperStyle={styles.card}>
+        <View>
           <Text>Register</Text>
           <Input
             placeholder="username"
             onChangeText={text => {
-              this.setState({ ...this.state, username: text });
+              setName(text);
             }}
             leftIcon={
               <Ionicons
                 name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-body`}
                 size={24}
+                style={styles.icon}
               />
             }
           />
           <Input
             placeholder="password"
             onChangeText={text => {
-              this.setState({ ...this.state, password: text });
+              setPassword(text);
             }}
             leftIcon={
               <Ionicons
                 name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-lock`}
                 size={24}
+                style={styles.icon}
               />
             }
           />
 
           <Button
             title="Register"
-            onPress={() => {
-              this.register();
+            onPress={async () => {
+              await register({ variables: { name, password } });
+
+              if (error) {
+                // @TODO handle this better
+                console.error('could not register!');
+              }
+
+              if (data) {
+                <GetLogin name={name} password={password} />;
+              }
             }}
           >
             Register
           </Button>
-        </Card>
-        <Divider />
-        <Card>
-          <Text>This will be the login form!</Text>
-        </Card>
-      </View>
-    );
-  }
+        </View>
+      </Card>
+      <Divider />
+      <Card>
+        <Text>This will be the login form!</Text>
+      </Card>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  card: {
+    width: 300
+  },
+  icon: {
+    display: 'flex',
+    width: 30,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -78,13 +101,5 @@ const styles = StyleSheet.create({
   },
   messageInstructions: {
     color: colors.lightContext.hex
-  },
-  messageInput: {
-    height: 50,
-    borderColor: colors.lightContext.hex,
-    borderWidth: 2,
-    borderRadius: 3,
-    paddingLeft: 20,
-    paddingRight: 20
   }
 });
