@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, AsyncStorage } from 'react-native';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import Loading from '../loading/Loading';
 
 const LOGIN = gql`
   query Login($name: String!, $password: String!) {
@@ -20,13 +21,18 @@ export default function GetLogin(props) {
     }
   });
 
+  if (loading) {
+    return <Loading />;
+  }
+
   if (error) {
-    console.error('could not login');
     return <Text>There was an error logging in </Text>;
   }
   if (data) {
-    console.error('we got the token back from the register', data.token);
-
-    AsyncStorage.setItem('@token', data.token);
+    if (!data.login && !data.login.token) {
+      return <Loading />;
+    }
+    AsyncStorage.setItem('@token', data.login.token);
+    return <Text>You are now logged in salor!</Text>;
   }
 }

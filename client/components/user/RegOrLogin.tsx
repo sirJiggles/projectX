@@ -3,9 +3,10 @@ import { View, Text, Button, StyleSheet, Platform } from 'react-native';
 import { Input, Divider, Card } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
+import Loading from '../loading/Loading';
+import GetLogin from './GetLogin';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-import GetLogin from './GetLogin';
 
 const REGISTER = gql`
   mutation Register($name: String!, $password: String!) {
@@ -16,16 +17,33 @@ const REGISTER = gql`
 `;
 
 export default function RegOrLogin() {
+  const [register, { data, loading, error }] = useMutation(REGISTER);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [register, { data, loading, error }] = useMutation(REGISTER);
+
+  // we will make the login query if we have the right conditions
+  const makeLoginQuery = data && <GetLogin name={name} password={password} />;
+
+  async function clickRegister(name: string, password: string) {
+    await register({ variables: { name, password } });
+
+    if (data) {
+      console.log('we just registered!');
+
+      return;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Card wrapperStyle={styles.card}>
         <View>
-          <Text>Register</Text>
+          <Text>Register / Login</Text>
           <Input
+            disabled={loading}
             placeholder="username"
+            autoCapitalize="none"
+            autoCorrect={false}
             onChangeText={text => {
               setName(text);
             }}
@@ -38,7 +56,12 @@ export default function RegOrLogin() {
             }
           />
           <Input
+            disabled={loading}
             placeholder="password"
+            autoCapitalize="none"
+            autoCompleteType="password"
+            autoCorrect={false}
+            secureTextEntry={true}
             onChangeText={text => {
               setPassword(text);
             }}
@@ -53,26 +76,19 @@ export default function RegOrLogin() {
 
           <Button
             title="Register"
-            onPress={async () => {
-              await register({ variables: { name, password } });
-
-              if (error) {
-                // @TODO handle this better
-                console.error('could not register!');
-              }
-
-              if (data) {
-                <GetLogin name={name} password={password} />;
-              }
+            // if we are loading or there is an error we disable the button
+            disabled={loading}
+            onPress={() => {
+              clickRegister(name, password);
             }}
           >
             Register
           </Button>
+
+          {makeLoginQuery}
+
+          {error && <Text>Error registering please try again</Text>}
         </View>
-      </Card>
-      <Divider />
-      <Card>
-        <Text>This will be the login form!</Text>
       </Card>
     </View>
   );
