@@ -10,6 +10,7 @@ const client = new ApolloClient({
     // here we can add the token to all the requests to the API
     // if it is there :D
     const token = await AsyncStorage.getItem('@token');
+
     operation.setContext({
       headers: {
         authorization: token ? `Bearer ${token}` : ''

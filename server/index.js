@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 
 const getUser = async req => {
-  const token = req.headers['token'];
+  const token = req.headers['authorization'];
 
   if (token) {
     try {

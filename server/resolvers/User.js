@@ -16,6 +16,17 @@ export default {
         return null;
       }
       return me;
+    }
+  },
+  Mutation: {
+    createUser: async (
+      parent,
+      { name, password },
+      { models: { userModel } },
+      info
+    ) => {
+      const user = await userModel.create({ name, password });
+      return user;
     },
     login: async (
       parent,
@@ -42,17 +53,6 @@ export default {
       return {
         token
       };
-    }
-  },
-  Mutation: {
-    createUser: async (
-      parent,
-      { name, password },
-      { models: { userModel } },
-      info
-    ) => {
-      const user = await userModel.create({ name, password });
-      return user;
     }
   },
   User: {

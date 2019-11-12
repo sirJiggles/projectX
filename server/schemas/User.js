@@ -14,10 +14,10 @@ export default gql`
   extend type Query {
     user(id: ID!): User!
     currentUser: User
-    login(name: String!, password: String!): Token!
   }
 
   extend type Mutation {
     createUser(name: String!, password: String!): User!
+    login(name: String!, password: String!): Token!
   }
 `;

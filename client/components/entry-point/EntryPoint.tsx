@@ -6,7 +6,7 @@ import Pages from '../navigation/Pages';
 import { Text } from 'react-native';
 import Loading from '../loading/Loading';
 
-const CURRENT_USER = gql`
+export const CURRENT_USER_QUERY = gql`
   {
     currentUser {
       id
@@ -16,13 +16,12 @@ const CURRENT_USER = gql`
 
 export default function EntryPoint() {
   // make sure we get current user from the network
-  const { loading, error, data } = useQuery(CURRENT_USER, {
+  const { loading, error, data } = useQuery(CURRENT_USER_QUERY, {
     fetchPolicy: 'network-only'
   });
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
+
   if (error) return <Text>Error :(</Text>;
 
   if (data.currentUser) {
