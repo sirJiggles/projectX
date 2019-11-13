@@ -12,9 +12,12 @@ export default function RegOrLogin() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loginView, setLoginView] = useState(true);
+  const [loginRequest, setLoginRequest] = useState(null);
 
   // of we get data from the register, will return jsx for login
-  const doLogin = data ? <GetLogin name={name} password={password} /> : null;
+  const doLoginAfterRegister = data ? (
+    <GetLogin name={name} password={password} />
+  ) : null;
 
   async function clickRegister(name: string, password: string) {
     await runRegisterMutation({ variables: { name, password } });
@@ -68,11 +71,12 @@ export default function RegOrLogin() {
             // if we are loading or there is an error we disable the button
             disabled={loading}
             onPress={() => {
-              loginView ? (
-                <GetLogin name={name} password={password} />
-              ) : (
-                clickRegister(name, password)
-              );
+              if (loginView) {
+                setLoginRequest(<GetLogin name={name} password={password} />);
+                return;
+              }
+
+              clickRegister(name, password);
             }}
           >
             {loginView ? 'Login' : 'Register'}
@@ -81,7 +85,9 @@ export default function RegOrLogin() {
           {/* @TODO have a nice error component here */}
           {error ? <Text>There was an error, please try again</Text> : null}
 
-          {doLogin}
+          {/* some queries to login at various points */}
+          {loginRequest}
+          {doLoginAfterRegister}
         </View>
       </Card>
     </View>
