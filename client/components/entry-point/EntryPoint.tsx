@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import RegOrLogin from '../user/RegOrLogin';
 import Pages from '../navigation/Pages';
-import { Text } from 'react-native';
+import { Text, AsyncStorage } from 'react-native';
 import Loading from '../loading/Loading';
 import currentUser from '../../graph/queries/currentUser';
 
@@ -15,9 +15,8 @@ export default function EntryPoint() {
   if (loading) return <Loading />;
 
   if (error) {
-    // if there is an error it could be that there is a session already
-    // in this case we will try log the user out
-    <Text>Your session has timed out you need to login again</Text>;
+    // clear the old token from the session storage to make sure we can re-login in
+    AsyncStorage.removeItem('@token');
   }
 
   if (data && data.currentUser) {
