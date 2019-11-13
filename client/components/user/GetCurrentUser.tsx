@@ -6,15 +6,11 @@ import Loading from '../loading/Loading';
 
 export default function GetCurrentUser() {
   // now re-request current user
-  const { data, error, loading } = useQuery(currentUser, {
+  const { error, loading } = useQuery(currentUser, {
     fetchPolicy: 'network-only'
   });
 
   if (loading) return <Loading />;
 
   if (error) return <Text>There was an error logging in (current user)</Text>;
-  if (data) {
-    console.error('did the login and the current data is:', data);
-    return null;
-  }
 }

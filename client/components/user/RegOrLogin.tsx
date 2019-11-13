@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Platform } from 'react-native';
+import { View, Text, Button, StyleSheet, Platform, Picker } from 'react-native';
 import { Input, Card } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
@@ -11,6 +11,7 @@ export default function RegOrLogin() {
   const [runRegisterMutation, { data, loading, error }] = useMutation(register);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [loginView, setLoginView] = useState(true);
 
   // of we get data from the register, will return jsx for login
   const doLogin = data ? <GetLogin name={name} password={password} /> : null;
@@ -22,8 +23,12 @@ export default function RegOrLogin() {
   return (
     <View style={styles.container}>
       <Card wrapperStyle={styles.card}>
+        <View style={styles.fixToText}>
+          <Button title="Login" onPress={() => setLoginView(true)} />
+          <Button title="Register" onPress={() => setLoginView(false)} />
+        </View>
         <View>
-          <Text>Register / Login</Text>
+          <Text>{loginView ? 'Login' : 'Register'}</Text>
           <Input
             disabled={loading}
             placeholder="username"
@@ -59,15 +64,20 @@ export default function RegOrLogin() {
           />
 
           <Button
-            title="Register"
+            title={loginView ? 'Login' : 'Register'}
             // if we are loading or there is an error we disable the button
             disabled={loading}
             onPress={() => {
-              clickRegister(name, password);
+              loginView ? (
+                <GetLogin name={name} password={password} />
+              ) : (
+                clickRegister(name, password)
+              );
             }}
           >
-            Register
+            {loginView ? 'Login' : 'Register'}
           </Button>
+
           {/* @TODO have a nice error component here */}
           {error ? <Text>There was an error, please try again</Text> : null}
 
@@ -79,6 +89,10 @@ export default function RegOrLogin() {
 }
 
 const styles = StyleSheet.create({
+  fixToText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   container: {
     flex: 1,
     alignItems: 'center',
