@@ -1,74 +1,22 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Platform,
-  AsyncStorage
-} from 'react-native';
+import { View, Text, Button, StyleSheet, Platform } from 'react-native';
 import { Input, Card } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
-import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import { CURRENT_USER_QUERY } from '../entry-point/EntryPoint';
+import { useMutation } from '@apollo/react-hooks';
 import GetLogin from './GetLogin';
-
-const REGISTER = gql`
-  mutation Register($name: String!, $password: String!) {
-    createUser(name: $name, password: $password) {
-      id
-    }
-  }
-`;
-
-const LOGIN = gql`
-  mutation Login($name: String!, $password: String!) {
-    login(name: $name, password: $password) {
-      token
-    }
-  }
-`;
+import register from '../../graph/mutations/register';
 
 export default function RegOrLogin() {
-  const [register, { data, loading, error }] = useMutation(REGISTER);
-  // const { loading: loadingLogin, error: errorLogin, data: datLogin } = useQuery(
-  //   LOGIN,
-  //   {
-  //     onCompleted: () => {
-  //       useQuery(CURRENT_USER_QUERY);
-  //     }
-  //   }
-  // );
-  // const [login, { loading: loadingLogin, error: errorLogin }] = useMutation(
-  //   LOGIN,
-  //   {
-  //     refetchQueries: [
-  //       {
-  //         query: CURRENT_USER_QUERY
-  //       }
-  //     ]
-  //   }
-  // );
+  const [runRegisterMutation, { data, loading, error }] = useMutation(register);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-
-  const loadingLogin = false;
-  const errorLogin = false;
 
   // of we get data from the register, will return jsx for login
   const doLogin = data ? <GetLogin name={name} password={password} /> : null;
 
   async function clickRegister(name: string, password: string) {
-    await register({ variables: { name, password } });
-    // login({ variables: { name, password } }).then(res => {
-    //   // set the token now that we logged in
-    //   if (!res.data.login.token) {
-    //     console.error('we could not get the token from the login');
-    //   }
-    //   AsyncStorage.setItem('@token', res.data.login.token);
-    // });
+    await runRegisterMutation({ variables: { name, password } });
   }
 
   return (
@@ -77,7 +25,7 @@ export default function RegOrLogin() {
         <View>
           <Text>Register / Login</Text>
           <Input
-            disabled={loading || loadingLogin}
+            disabled={loading}
             placeholder="username"
             autoCapitalize="none"
             autoCorrect={false}
@@ -93,7 +41,7 @@ export default function RegOrLogin() {
             }
           />
           <Input
-            disabled={loading || loadingLogin}
+            disabled={loading}
             placeholder="password"
             autoCapitalize="none"
             autoCorrect={false}
@@ -113,7 +61,7 @@ export default function RegOrLogin() {
           <Button
             title="Register"
             // if we are loading or there is an error we disable the button
-            disabled={loading || loadingLogin}
+            disabled={loading}
             onPress={() => {
               clickRegister(name, password);
             }}
@@ -121,9 +69,7 @@ export default function RegOrLogin() {
             Register
           </Button>
           {/* @TODO have a nice error component here */}
-          {error || errorLogin ? (
-            <Text>There was an error, please try again</Text>
-          ) : null}
+          {error ? <Text>There was an error, please try again</Text> : null}
 
           {doLogin}
         </View>

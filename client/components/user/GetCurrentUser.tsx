@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { CURRENT_USER_QUERY } from '../entry-point/EntryPoint';
+import currentUser from '../../graph/queries/currentUser';
 import { useQuery } from '@apollo/react-hooks';
 import Loading from '../loading/Loading';
 
 export default function GetCurrentUser() {
   // now re-request current user
-  const { data, error, loading } = useQuery(CURRENT_USER_QUERY, {
+  const { data, error, loading } = useQuery(currentUser, {
     fetchPolicy: 'network-only'
   });
 

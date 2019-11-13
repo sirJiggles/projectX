@@ -1,21 +1,13 @@
 import React from 'react';
 import { Text, AsyncStorage } from 'react-native';
 import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import Loading from '../loading/Loading';
 import GetCurrentUser from './GetCurrentUser';
-
-const LOGIN = gql`
-  query Login($name: String!, $password: String!) {
-    login(name: $name, password: $password) {
-      token
-    }
-  }
-`;
+import login from '../../graph/queries/login';
 
 export default function GetLogin(props) {
   const { name, password } = props;
-  const { error, data, loading } = useQuery(LOGIN, {
+  const { error, data, loading } = useQuery(login, {
     variables: {
       name,
       password
