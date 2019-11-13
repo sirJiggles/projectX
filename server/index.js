@@ -17,8 +17,9 @@ const getUser = async req => {
   const token = req.headers['authorization'];
 
   if (token) {
+    const cleanToken = token.replace('Bearer ', '');
     try {
-      return await jwt.verify(token, 'riddlemethis');
+      return await jwt.verify(cleanToken, 'riddlemethis');
     } catch (e) {
       throw new AuthenticationError('Your session expired. Sign in again.');
     }

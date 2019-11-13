@@ -11,8 +11,9 @@ import { Input, Card } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { CURRENT_USER_QUERY } from '../entry-point/EntryPoint';
+import GetLogin from './GetLogin';
 
 const REGISTER = gql`
   mutation Register($name: String!, $password: String!) {
@@ -32,28 +33,42 @@ const LOGIN = gql`
 
 export default function RegOrLogin() {
   const [register, { data, loading, error }] = useMutation(REGISTER);
-  const [login, { loading: loadingLogin, error: errorLogin }] = useMutation(
-    LOGIN,
-    {
-      refetchQueries: [
-        {
-          query: CURRENT_USER_QUERY
-        }
-      ]
-    }
-  );
+  // const { loading: loadingLogin, error: errorLogin, data: datLogin } = useQuery(
+  //   LOGIN,
+  //   {
+  //     onCompleted: () => {
+  //       useQuery(CURRENT_USER_QUERY);
+  //     }
+  //   }
+  // );
+  // const [login, { loading: loadingLogin, error: errorLogin }] = useMutation(
+  //   LOGIN,
+  //   {
+  //     refetchQueries: [
+  //       {
+  //         query: CURRENT_USER_QUERY
+  //       }
+  //     ]
+  //   }
+  // );
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
+  const loadingLogin = false;
+  const errorLogin = false;
+
+  // of we get data from the register, will return jsx for login
+  const doLogin = data ? <GetLogin name={name} password={password} /> : null;
+
   async function clickRegister(name: string, password: string) {
     await register({ variables: { name, password } });
-    login({ variables: { name, password } }).then(res => {
-      // set the token now that we logged in
-      if (!res.data.login.token) {
-        console.error('we could not get the token from the login');
-      }
-      AsyncStorage.setItem('@token', res.data.login.token);
-    });
+    // login({ variables: { name, password } }).then(res => {
+    //   // set the token now that we logged in
+    //   if (!res.data.login.token) {
+    //     console.error('we could not get the token from the login');
+    //   }
+    //   AsyncStorage.setItem('@token', res.data.login.token);
+    // });
   }
 
   return (
@@ -81,7 +96,6 @@ export default function RegOrLogin() {
             disabled={loading || loadingLogin}
             placeholder="password"
             autoCapitalize="none"
-            autoCompleteType="password"
             autoCorrect={false}
             secureTextEntry={true}
             onChangeText={text => {
@@ -110,6 +124,8 @@ export default function RegOrLogin() {
           {error || errorLogin ? (
             <Text>There was an error, please try again</Text>
           ) : null}
+
+          {doLogin}
         </View>
       </Card>
     </View>

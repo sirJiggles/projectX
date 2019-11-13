@@ -22,9 +22,13 @@ export default function EntryPoint() {
 
   if (loading) return <Loading />;
 
-  if (error) return <Text>Error :(</Text>;
+  if (error) {
+    // if there is an error it could be that there is a session already
+    // in this case we will try log the user out
+    <Text>Your session has timed out you need to login again</Text>;
+  }
 
-  if (data.currentUser) {
+  if (data && data.currentUser) {
     return <Pages />;
   }
   return <RegOrLogin />;
