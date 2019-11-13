@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Quote from '../quote/Quote';
 import MessageSender from '../message-sender/MessageSender';
 
 export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Quote />
         <MessageSender />
       </View>
     );
