@@ -7,7 +7,10 @@ import Loading from '../loading/Loading';
 import currentUser from '../../graph/queries/currentUser';
 
 export default function EntryPoint() {
-  AsyncStorage.removeItem('@token');
+  // @TODO remove this as we can keep the session if we like
+  // later we just need to be better at clearing it
+  // AsyncStorage.removeItem('@token');
+
   // make sure we get current user from the network
   const { loading, error, data } = useQuery(currentUser, {
     fetchPolicy: 'network-only'

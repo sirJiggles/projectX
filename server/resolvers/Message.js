@@ -15,6 +15,17 @@ export default {
       }
       const messages = await messageModel.find({ author: me.id }).exec();
       return messages;
+    },
+    // this is obviously mental as we should only get messages for a specific chat
+    // but for our sample app who cares
+    allMessages: async (
+      parent,
+      args,
+      { models: { messageModel }, me },
+      info
+    ) => {
+      const messages = await messageModel.find().exec();
+      return messages || [];
     }
   },
   Mutation: {

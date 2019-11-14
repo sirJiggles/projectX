@@ -10,6 +10,7 @@ export default gql`
   extend type Query {
     message(id: ID!): Message!
     messages: [Message!]!
+    allMessages: [Message!]!
   }
 
   extend type Mutation {
