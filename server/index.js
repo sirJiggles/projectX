@@ -3,6 +3,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
+import http from 'http';
 
 import schemas from './schemas';
 import resolvers from './resolvers';
@@ -46,6 +47,10 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-app.listen(5000, () => {
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+// app.listen(5000, () => {
+httpServer.listen(5000, () => {
   mongoose.connect('mongodb://localhost:27017/graphql');
 });

@@ -10,6 +10,9 @@ export default gql`
   extend type Query {
     message(id: ID!): Message!
     messages: [Message!]!
+  }
+
+  type Subscription {
     allMessages: [Message!]!
   }
 

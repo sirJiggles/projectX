@@ -1,4 +1,11 @@
 import { AuthenticationError } from 'apollo-server';
+import { PubSub } from 'apollo-server-express';
+import { subscribe } from 'graphql';
+
+const pubsub = new PubSub();
+
+// what do we want to listen to for the messages
+const MESSAGES = 'messages';
 
 export default {
   Query: {
@@ -15,7 +22,9 @@ export default {
       }
       const messages = await messageModel.find({ author: me.id }).exec();
       return messages;
-    },
+    }
+  },
+  Subscription: {
     // this is obviously mental as we should only get messages for a specific chat
     // but for our sample app who cares
     allMessages: async (
@@ -24,8 +33,11 @@ export default {
       { models: { messageModel }, me },
       info
     ) => {
-      const messages = await messageModel.find().exec();
-      return messages || [];
+      subscribe: () => {
+        pubsub.asyncIterator([MESSAGES]);
+      };
+      // const messages = await messageModel.find().exec();
+      // return messages || [];
     }
   },
   Mutation: {
@@ -42,6 +54,8 @@ export default {
         content,
         author: me.id
       });
+      // if anyone is listening to messages that where created
+      pubsub.publish(MESSAGES, message);
       return message;
     }
   },
