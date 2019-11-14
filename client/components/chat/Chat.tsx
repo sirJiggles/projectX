@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Text } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import colors from '../../ui/colors';
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks';
@@ -13,7 +14,8 @@ function Chat() {
 
   // get the user and the messages from the API
   const { data: userData } = useQuery(currentUser);
-  const { data: messageData } = useSubscription(allMessages);
+  const { data: messageData, error, loading } = useSubscription(allMessages);
+
   // get the mutation for creating a message here
   const [
     sendMessage,
@@ -61,6 +63,14 @@ function Chat() {
   if (!userData || !userData.currentUser) {
     return <Loading />;
   }
+
+  if (error) {
+    console.log(error);
+    return <Text>There was an error getting the all messages</Text>;
+  }
+
+  if (loading) return <Loading />;
+
   return (
     <GiftedChat
       messages={messages}

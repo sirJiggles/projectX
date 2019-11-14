@@ -25,6 +25,9 @@ export default {
     }
   },
   Subscription: {
+    // allMessages: {
+    //   subscribe: () => pubsub.asyncIterator([MESSAGES]);
+    // }
     // this is obviously mental as we should only get messages for a specific chat
     // but for our sample app who cares
     allMessages: async (
@@ -33,9 +36,9 @@ export default {
       { models: { messageModel }, me },
       info
     ) => {
-      subscribe: () => {
-        pubsub.asyncIterator([MESSAGES]);
-      };
+      subscribe: () => pubsub.asyncIterator([MESSAGES]);
+      // console.log('we shold be getting all the mesages in here now');
+
       // const messages = await messageModel.find().exec();
       // return messages || [];
     }

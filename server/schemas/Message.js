@@ -12,7 +12,7 @@ export default gql`
     messages: [Message!]!
   }
 
-  type Subscription {
+  extend type Subscription {
     allMessages: [Message!]!
   }
 

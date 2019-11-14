@@ -1,15 +1,13 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  subscription allMessages() {
-    {
-      allMessages {
-        content
+  subscription {
+    allMessages {
+      content
+      id
+      author {
         id
-        author {
-          id
-          name
-        }
+        name
       }
     }
   }
