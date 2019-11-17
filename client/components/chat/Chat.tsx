@@ -4,6 +4,7 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import colors from '../../ui/colors';
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks';
 import currentUser from '../../graph/queries/currentUser';
+import getMessages from '../../graph/queries/messages';
 import newMessage from '../../graph/subscriptions/newMessage';
 import Message from '../../interfaces/message';
 import createMessage from '../../graph/mutations/createMessage';
@@ -13,8 +14,17 @@ function Chat() {
   const [messages, setMessages] = useState([]);
 
   // get the user and the messages from the API
-  const { data: userData } = useQuery(currentUser);
-  const { data: messageData, error, loading } = useSubscription(newMessage);
+  const { data: userData, loading: userLoading } = useQuery(currentUser);
+  const {
+    data: messagesData,
+    error: getMessagesError,
+    loading: getMessagesLoading
+  } = useQuery(getMessages);
+
+  // subscribe to new messages in this chat
+  const { data: newMessageData, error: newMessageError } = useSubscription(
+    newMessage
+  );
 
   // get the mutation for creating a message here
   const [
@@ -22,7 +32,7 @@ function Chat() {
     { error: sendMsgError, loading: sendMsgLoading }
   ] = useMutation(createMessage);
 
-  const onSend = async (sentMessages = []) => {
+  const tapSendMessage = async (sentMessages = []) => {
     const message = sentMessages[0];
     if (!message || !message.text) {
       return;
@@ -33,7 +43,6 @@ function Chat() {
     if (sendMsgError) {
       throw new Error('could not send a message to the server');
     }
-    // setMessages(GiftedChat.append(messages, sentMessages));
   };
 
   // internal util function to format the messages that come from the API
@@ -49,26 +58,35 @@ function Chat() {
     };
   };
 
+  // when we get a new message from the server for this chat
   useEffect(() => {
-    if (messageData && messageData.newMessage) {
-      console.log(messageData.newMessage);
-      setMessages([formatMessage(messageData.newMessage), ...messages]);
+    if (newMessageData && newMessageData.newMessage) {
+      setMessages([formatMessage(newMessageData.newMessage), ...messages]);
     }
-  }, [messageData]);
+  }, [newMessageData]);
 
-  if (!userData || !userData.currentUser) {
+  // when we load all the messages from the server render them
+  useEffect(() => {
+    if (messagesData && messagesData.messages) {
+      const formattedMessages = messagesData.messages.map(message => {
+        return formatMessage(message);
+      });
+      setMessages([...formattedMessages, ...messages]);
+    }
+  }, [messagesData]);
+
+  if (userLoading || getMessagesLoading) {
     return <Loading />;
   }
 
-  if (error) {
-    console.log(error);
-    return <Text>There was an error getting the all messages</Text>;
+  if (newMessageError || getMessagesError) {
+    return <Text>Error getting a new message, please reload</Text>;
   }
 
   return (
     <GiftedChat
       messages={messages}
-      onSend={messages => onSend(messages)}
+      onSend={messages => tapSendMessage(messages)}
       user={{
         _id: userData.currentUser.id,
         avatar: 'https://placeimg.com/140/140/any'

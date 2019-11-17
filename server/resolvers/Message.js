@@ -17,10 +17,7 @@ export default {
       return message;
     },
     messages: async (parent, args, { models: { messageModel }, me }, info) => {
-      if (!me) {
-        throw new AuthenticationError('You are not authenticated');
-      }
-      const messages = await messageModel.find({ author: me.id }).exec();
+      const messages = await messageModel.find().exec();
       return messages;
     }
   },
@@ -28,20 +25,6 @@ export default {
     newMessage: {
       subscribe: () => pubsub.asyncIterator(MESSAGES)
     }
-    // this is obviously mental as we should only get messages for a specific chat
-    // but for our sample app who cares
-    // newMessage: async (
-    //   parent,
-    //   args,
-    //   { models: { messageModel }, me },
-    //   info
-    // ) => {
-    //   subscribe: () => pubsub.asyncIterator(MESSAGES);
-    //   // console.log('we shold be getting all the mesages in here now');
-
-    //   // const messages = await messageModel.find().exec();
-    //   // return messages || [];
-    // }
   },
   Mutation: {
     createMessage: async (
