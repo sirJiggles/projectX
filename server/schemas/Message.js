@@ -13,7 +13,7 @@ export default gql`
   }
 
   extend type Subscription {
-    allMessages: [Message!]!
+    newMessage: Message!
   }
 
   extend type Mutation {

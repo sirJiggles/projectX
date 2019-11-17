@@ -1,11 +1,11 @@
 import cors from 'cors';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import http from 'http';
 
-import schemas from './schemas';
+import typeDefs from './schemas';
 import resolvers from './resolvers';
 
 import userModel from './models/User';
@@ -28,19 +28,27 @@ const getUser = async req => {
 };
 
 const server = new ApolloServer({
-  typeDefs: schemas,
+  typeDefs,
   resolvers,
-  context: async ({ req }) => {
-    if (req) {
-      const me = await getUser(req);
-
-      return {
-        me,
-        models: {
-          userModel,
-          messageModel
-        }
+  context: async ({ req, connection }) => {
+    if (connection) {
+      const context = {
+        models: { userModel, messageModel },
+        ...connection.context
       };
+      return context;
+    } else {
+      if (req) {
+        const me = await getUser(req);
+
+        return {
+          me,
+          models: {
+            userModel,
+            messageModel
+          }
+        };
+      }
     }
   }
 });
@@ -50,7 +58,6 @@ server.applyMiddleware({ app, path: '/graphql' });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-// app.listen(5000, () => {
 httpServer.listen(5000, () => {
   mongoose.connect('mongodb://localhost:27017/graphql');
 });

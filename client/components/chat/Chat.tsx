@@ -4,7 +4,7 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import colors from '../../ui/colors';
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks';
 import currentUser from '../../graph/queries/currentUser';
-import allMessages from '../../graph/subscriptions/allMessages';
+import newMessage from '../../graph/subscriptions/newMessage';
 import Message from '../../interfaces/message';
 import createMessage from '../../graph/mutations/createMessage';
 import Loading from '../loading/Loading';
@@ -14,7 +14,7 @@ function Chat() {
 
   // get the user and the messages from the API
   const { data: userData } = useQuery(currentUser);
-  const { data: messageData, error, loading } = useSubscription(allMessages);
+  const { data: messageData, error, loading } = useSubscription(newMessage);
 
   // get the mutation for creating a message here
   const [
@@ -37,26 +37,22 @@ function Chat() {
   };
 
   // internal util function to format the messages that come from the API
-  const formatMessages = (messagesToFormat: Message[]) => {
-    return messagesToFormat.map(msg => {
-      if (!msg.id) {
-        return;
+  const formatMessage = (msg: Message) => {
+    return {
+      _id: msg.id,
+      text: msg.content,
+      user: {
+        _id: msg.author.id,
+        name: msg.author.name,
+        avatar: 'https://placeimg.com/140/140/any'
       }
-      return {
-        _id: msg.id,
-        text: msg.content,
-        user: {
-          _id: msg.author.id,
-          name: msg.author.name,
-          avatar: 'https://placeimg.com/140/140/any'
-        }
-      };
-    });
+    };
   };
 
   useEffect(() => {
-    if (messageData && messageData.allMessages) {
-      setMessages(formatMessages(messageData.allMessages));
+    if (messageData && messageData.newMessage) {
+      console.log(messageData.newMessage);
+      setMessages([formatMessage(messageData.newMessage), ...messages]);
     }
   }, [messageData]);
 
@@ -68,8 +64,6 @@ function Chat() {
     console.log(error);
     return <Text>There was an error getting the all messages</Text>;
   }
-
-  if (loading) return <Loading />;
 
   return (
     <GiftedChat

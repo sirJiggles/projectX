@@ -5,7 +5,7 @@ import { subscribe } from 'graphql';
 const pubsub = new PubSub();
 
 // what do we want to listen to for the messages
-const MESSAGES = 'messages';
+const MESSAGES = 'NEW_MESSAGES';
 
 export default {
   Query: {
@@ -25,28 +25,28 @@ export default {
     }
   },
   Subscription: {
-    // allMessages: {
-    //   subscribe: () => pubsub.asyncIterator([MESSAGES]);
-    // }
+    newMessage: {
+      subscribe: () => pubsub.asyncIterator(MESSAGES)
+    }
     // this is obviously mental as we should only get messages for a specific chat
     // but for our sample app who cares
-    allMessages: async (
-      parent,
-      args,
-      { models: { messageModel }, me },
-      info
-    ) => {
-      subscribe: () => pubsub.asyncIterator([MESSAGES]);
-      // console.log('we shold be getting all the mesages in here now');
+    // newMessage: async (
+    //   parent,
+    //   args,
+    //   { models: { messageModel }, me },
+    //   info
+    // ) => {
+    //   subscribe: () => pubsub.asyncIterator(MESSAGES);
+    //   // console.log('we shold be getting all the mesages in here now');
 
-      // const messages = await messageModel.find().exec();
-      // return messages || [];
-    }
+    //   // const messages = await messageModel.find().exec();
+    //   // return messages || [];
+    // }
   },
   Mutation: {
     createMessage: async (
       parent,
-      { content },
+      args,
       { models: { messageModel }, me },
       info
     ) => {
@@ -54,11 +54,13 @@ export default {
         throw new AuthenticationError('You are not authenticated');
       }
       const message = await messageModel.create({
-        content,
+        content: args.content,
         author: me.id
       });
       // if anyone is listening to messages that where created
-      pubsub.publish(MESSAGES, message);
+      pubsub.publish(MESSAGES, {
+        newMessage: message
+      });
       return message;
     }
   },
