@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Platform, Picker } from 'react-native';
-import { Input, Card } from 'react-native-elements';
+import { Input, Card, ButtonGroup } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
 import { useMutation } from '@apollo/react-hooks';
@@ -23,15 +23,22 @@ export default function RegOrLogin() {
     await runRegisterMutation({ variables: { name, password } });
   }
 
+  function setView(index) {
+    setLoginView(index === 0);
+  }
+
   return (
     <View style={styles.container}>
+      <View style={styles.buttons}>
+        <ButtonGroup
+          onPress={setView}
+          selectedIndex={loginView ? 0 : 1}
+          buttons={['Login', 'Register']}
+          containerStyle={{ height: 30 }}
+        />
+      </View>
       <Card wrapperStyle={styles.card}>
-        <View style={styles.fixToText}>
-          <Button title="Login" onPress={() => setLoginView(true)} />
-          <Button title="Register" onPress={() => setLoginView(false)} />
-        </View>
         <View>
-          <Text>{loginView ? 'Login' : 'Register'}</Text>
           <Input
             disabled={loading}
             placeholder="username"
@@ -95,9 +102,9 @@ export default function RegOrLogin() {
 }
 
 const styles = StyleSheet.create({
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+  buttons: {
+    width: 300,
+    marginBottom: 40
   },
   container: {
     flex: 1,
