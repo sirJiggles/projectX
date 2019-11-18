@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MessageSender from '../message-sender/MessageSender';
 
 export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <MessageSender />
+        {/* List all the chats in the app */}
       </View>
     );
   }

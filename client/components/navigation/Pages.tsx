@@ -1,23 +1,26 @@
 import Home from '../home/Home';
 import Chat from '../chat/Chat';
-import ChatLoading from '../chat-loading/ChatLoading';
+// import ChatLoading from '../chat-loading/ChatLoading';
 import React from 'react';
 import { Platform } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
+// import { createStackNavigator } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import colors from '../../ui/colors';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import Draw from '../draw/draw';
+import PlatformSpecificIconName from '../../utils/iconName';
 
-const ChatStack = createStackNavigator({
-  ChatLoading,
-  Chat
-});
+// const ChatStack = createStackNavigator({
+//   ChatLoading,
+//   Chat
+// });
 
 const TabNavigator = createBottomTabNavigator(
   {
     Home,
-    ChatStack
+    Chat
   },
   {
     defaultNavigationOptions: ({ navigation }) => ({
@@ -29,13 +32,13 @@ const TabNavigator = createBottomTabNavigator(
           // Sometimes we want to add badges to some icons.
           // You can check the implementation below.
           // IconComponent = HomeIconWithBadge;
-        } else if (routeName === 'ChatStack') {
+        } else if (routeName === 'Chat') {
           iconName = 'chatbubbles';
         }
 
         // iconName = focused ? iconName : `${iconName}-outline`;
 
-        iconName = Platform.OS === 'ios' ? `ios-${iconName}` : `md-${iconName}`;
+        iconName = PlatformSpecificIconName(iconName);
 
         // You can return any component that you like here!
         return <Ionicons name={iconName} size={25} color={tintColor} />;
@@ -48,4 +51,15 @@ const TabNavigator = createBottomTabNavigator(
   }
 );
 
-export default createAppContainer(TabNavigator);
+const ProfileNavigator = createDrawerNavigator(
+  {
+    Drawer: TabNavigator
+  },
+  {
+    initialRouteName: 'Drawer',
+    contentComponent: Draw,
+    drawerWidth: 300
+  }
+);
+
+export default createAppContainer(ProfileNavigator);
