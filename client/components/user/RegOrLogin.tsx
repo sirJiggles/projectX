@@ -23,15 +23,11 @@ export default function RegOrLogin() {
     await runRegisterMutation({ variables: { name, password } });
   }
 
-  function setView(index) {
-    setLoginView(index === 0);
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
         <ButtonGroup
-          onPress={setView}
+          onPress={index => setLoginView(index === 0)}
           selectedIndex={loginView ? 0 : 1}
           buttons={['Login', 'Register']}
           containerStyle={{ height: 30 }}
