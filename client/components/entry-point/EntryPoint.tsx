@@ -12,7 +12,7 @@ export default function EntryPoint() {
   // AsyncStorage.removeItem('@token');
 
   // make sure we get current user from the network
-  const { loading, error, data } = useQuery(currentUser, {
+  const { loading, error, data, refetch } = useQuery(currentUser, {
     fetchPolicy: 'network-only'
   });
 
@@ -21,6 +21,8 @@ export default function EntryPoint() {
   if (error) {
     // clear the old token from the session storage to make sure we can re-login in
     AsyncStorage.removeItem('@token');
+    // trigger the re-fetch to make sure we show the login page
+    refetch();
   }
 
   if (data && data.currentUser) {
