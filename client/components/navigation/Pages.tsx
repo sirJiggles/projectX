@@ -62,4 +62,8 @@ const ProfileNavigator = createDrawerNavigator(
   }
 );
 
-export default createAppContainer(ProfileNavigator);
+// for now we just do not include the draw on the web
+// we can do that another way later
+export default createAppContainer(
+  Platform.OS === 'web' ? TabNavigator : ProfileNavigator
+);

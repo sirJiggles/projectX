@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Chats from '../chats/Chats';
 
 export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* List all the chats in the app */}
+        <Chats />
       </View>
     );
   }
@@ -15,7 +16,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 50
   }
 });

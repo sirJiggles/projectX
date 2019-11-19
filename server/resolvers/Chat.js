@@ -35,7 +35,7 @@ export default {
       }
       const chat = await chatModel.create({
         name: args.name,
-        author: me.id,
+        owner: me.id,
         members: args.members,
         // all chats start with no messages
         messages: []
