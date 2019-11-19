@@ -8,6 +8,10 @@ const messageSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
+  },
+  chat: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'chat'
   }
 });
 

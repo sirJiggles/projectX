@@ -51,6 +51,10 @@ export default {
     author: async ({ author }, args, { models: { userModel } }, info) => {
       const user = await userModel.findById({ _id: author }).exec();
       return user;
+    },
+    chat: async ({ chatId }, args, { models: { chatModel } }, info) => {
+      const chat = await chatModel.findById({ _id: chatId }).exec();
+      return chat;
     }
   }
 };

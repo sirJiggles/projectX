@@ -10,6 +10,7 @@ import resolvers from './resolvers';
 
 import userModel from './models/User';
 import messageModel from './models/Message';
+import chatModel from './models/Chat';
 
 const app = express();
 app.use(cors());
@@ -33,7 +34,7 @@ const server = new ApolloServer({
   context: async ({ req, connection }) => {
     if (connection) {
       const context = {
-        models: { userModel, messageModel },
+        models: { userModel, messageModel, chatModel },
         ...connection.context
       };
       return context;
@@ -45,7 +46,8 @@ const server = new ApolloServer({
           me,
           models: {
             userModel,
-            messageModel
+            messageModel,
+            chatModel
           }
         };
       }

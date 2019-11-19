@@ -40,9 +40,7 @@ export default function RegOrLogin() {
             placeholder="username"
             autoCapitalize="none"
             autoCorrect={false}
-            onChangeText={text => {
-              setName(text);
-            }}
+            onChangeText={text => setName(text)}
             leftIcon={
               <Ionicons
                 name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-body`}
@@ -57,9 +55,7 @@ export default function RegOrLogin() {
             autoCapitalize="none"
             autoCorrect={false}
             secureTextEntry={true}
-            onChangeText={text => {
-              setPassword(text);
-            }}
+            onChangeText={text => setPassword(text)}
             leftIcon={
               <Ionicons
                 name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-lock`}

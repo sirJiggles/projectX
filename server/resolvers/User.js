@@ -59,6 +59,12 @@ export default {
     messages: async ({ id }, args, { models: { messageModel } }, info) => {
       const messages = await messageModel.find({ author: id }).exec();
       return messages;
+    },
+    chats: async ({ id }, args, { models: { chatModel } }, info) => {
+      const myChats = await chatModel.find({ owner: id }).exec();
+      const chatsIAmIn = await chatModel.find({ members: id }).exec();
+
+      return [...myChats, ...chatsIAmIn];
     }
   }
 };

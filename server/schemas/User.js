@@ -5,6 +5,7 @@ export default gql`
     id: ID!
     name: String!
     messages: [Message!]!
+    chats: [Chat!]!
   }
 
   type Token {

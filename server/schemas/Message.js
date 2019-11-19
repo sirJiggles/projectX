@@ -5,6 +5,7 @@ export default gql`
     id: ID!
     content: String!
     author: User!
+    chat: Chat!
   }
 
   extend type Query {
