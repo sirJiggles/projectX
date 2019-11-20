@@ -4,7 +4,6 @@ import Loading from '../loading/Loading';
 import { ListItem, Button } from 'react-native-elements';
 import createChatMutation from '../../graph/mutations/createChat';
 import { useMutation } from '@apollo/react-hooks';
-import PlatformSpecificIconName from '../../utils/iconName';
 
 interface CreateChatResult {
   name?: string;
@@ -26,13 +25,7 @@ export default function Contacts() {
   return (
     <View>
       <Button
-        icon={{
-          name: PlatformSpecificIconName('add-circle-outline'),
-          type: 'ionicon',
-          color: '#fff'
-        }}
         disabled={loadingCreateChat}
-        iconRight
         onPress={async () =>
           await createChat({
             variables: {
@@ -40,7 +33,7 @@ export default function Contacts() {
             }
           })
         }
-        title="Add Chat"
+        title="Start"
       />
       {loadingContacts ? (
         <Loading />

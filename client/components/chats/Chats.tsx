@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SFC } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useQuery } from '@apollo/react-hooks';
 import Loading from '../loading/Loading';
@@ -7,12 +7,13 @@ import Chat from '../../interfaces/chat';
 import { ListItem, Button } from 'react-native-elements';
 import PlatformSpecificIconName from '../../utils/iconName';
 import Routes from '../../enums/routes';
+import { NavigationInjectedProps } from 'react-navigation';
 
 interface ChatResults {
   chats?: Chat[];
 }
 
-export default function Chats({ navigation }) {
+const Chats: SFC<NavigationInjectedProps> = ({ navigation }) => {
   const { loading: loadingChats, data: chatData, error: chatError } = useQuery<
     ChatResults
   >(getChats);
@@ -24,7 +25,7 @@ export default function Chats({ navigation }) {
   if (chatData && chatData.chats) {
     return (
       <View>
-        <View style={styles.controls}>
+        <View>
           <Button
             icon={{
               name: PlatformSpecificIconName('add-circle-outline'),
@@ -52,7 +53,7 @@ export default function Chats({ navigation }) {
   }
 
   return <Loading />;
-}
+};
 
 const styles = StyleSheet.create({
   controls: {
@@ -64,3 +65,5 @@ const styles = StyleSheet.create({
     marginTop: 30
   }
 });
+
+export default Chats;
