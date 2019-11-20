@@ -56,11 +56,6 @@ const Chats: SFC<NavigationInjectedProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  controls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   chats: {
     marginTop: 30
   }
