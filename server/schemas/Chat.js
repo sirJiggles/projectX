@@ -19,6 +19,6 @@ export default gql`
   }
 
   extend type Mutation {
-    createChat(name: String!, members: [User!]!): Chat!
+    createChat(name: String!, members: [UserInput!]!): Chat!
   }
 `;

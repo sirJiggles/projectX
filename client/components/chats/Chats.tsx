@@ -1,30 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import Loading from '../loading/Loading';
 import getChats from '../../graph/queries/chats';
-import createChatMutation from '../../graph/mutations/createChat';
 import Chat from '../../interfaces/chat';
 import { ListItem, Button } from 'react-native-elements';
 import PlatformSpecificIconName from '../../utils/iconName';
+import Routes from '../../enums/routes';
 
 interface ChatResults {
   chats?: Chat[];
 }
 
-interface CreateChatResult {
-  name?: string;
-}
-
-export default function Chats() {
+export default function Chats({ navigation }) {
   const { loading: loadingChats, data: chatData, error: chatError } = useQuery<
     ChatResults
   >(getChats);
-
-  const [
-    createChat,
-    { data: chatCreated, loading: loadingCreateChat }
-  ] = useMutation<CreateChatResult>(createChatMutation);
 
   if (chatError) {
     return <Text>There was an error getting the chats</Text>;
@@ -40,16 +31,11 @@ export default function Chats() {
               type: 'ionicon',
               color: '#fff'
             }}
-            disabled={loadingCreateChat}
             iconRight
-            onPress={async () =>
-              await createChat({
-                variables: {
-                  name: 'someName'
-                }
-              })
-            }
-            title="Add Chat"
+            onPress={() => {
+              navigation.navigate(Routes.contacts);
+            }}
+            title="New Chat"
           />
         </View>
         <View style={styles.chats}>

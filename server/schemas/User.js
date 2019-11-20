@@ -8,6 +8,10 @@ export default gql`
     chats: [Chat!]!
   }
 
+  input UserInput {
+    id: ID!
+  }
+
   type Token {
     token: String!
   }

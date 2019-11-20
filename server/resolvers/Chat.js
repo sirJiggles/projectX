@@ -29,14 +29,19 @@ export default {
     }
   },
   Mutation: {
-    createChat: async (parent, args, { models: { chatModel }, me }, info) => {
+    createChat: async (
+      parent,
+      { name, members },
+      { models: { chatModel }, me },
+      info
+    ) => {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
       const chat = await chatModel.create({
-        name: args.name,
+        name,
         owner: me.id,
-        members: args.members,
+        members,
         // all chats start with no messages
         messages: []
       });

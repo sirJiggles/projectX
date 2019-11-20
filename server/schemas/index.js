@@ -15,4 +15,4 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, userSchema, messageSchema, chatSchema];
+export default [linkSchema, chatSchema, userSchema, messageSchema];
