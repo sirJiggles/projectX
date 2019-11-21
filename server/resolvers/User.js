@@ -1,6 +1,17 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'apollo-server';
+import * as PhoneCodes from '../utils/CountryCodes';
+
+function formatPhoneNumber(number) {
+  // first lets remove all the spaces
+  let formattedNumber = number.replace(' ', '');
+  // now lets remove the county codes if supplied
+  PhoneCodes.foreach(country => {
+    formattedNumber = formattedNumber.replace(country.dial_code, '0');
+  });
+  return formattedNumber;
+}
 
 export default {
   Query: {
@@ -11,6 +22,17 @@ export default {
       const user = await userModel.findById({ _id: id }).exec();
       return user;
     },
+    users: async (parent, { numbers }, { models: { userModel }, me }, info) => {
+      if (!me) {
+        throw new AuthenticationError('You are not authenticated');
+      }
+      // format the incoming phone numbers to make sure we can find them
+      numbers = numbers.map(number => {
+        return formatPhoneNumber(number);
+      });
+      const users = await userModel.find({ number: numbers }).exec();
+      return user;
+    },
     currentUser: (parent, args, { models: { userModel }, me }, info) => {
       if (!me) {
         return null;
@@ -19,11 +41,12 @@ export default {
     },
     login: async (
       parent,
-      { name, password },
+      { number, password },
       { models: { userModel } },
       info
     ) => {
-      const user = await userModel.findOne({ name }).exec();
+      number = formatPhoneNumber(number);
+      const user = await userModel.findOne({ number }).exec();
 
       if (!user) {
         throw new AuthenticationError('Invalid credentials');
@@ -47,11 +70,12 @@ export default {
   Mutation: {
     createUser: async (
       parent,
-      { name, password },
+      { number, password },
       { models: { userModel } },
       info
     ) => {
-      const user = await userModel.create({ name, password });
+      number = formatPhoneNumber(number);
+      const user = await userModel.create({ number, password });
       return user;
     }
   },

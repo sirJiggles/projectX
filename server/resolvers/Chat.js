@@ -38,6 +38,21 @@ export default {
       if (!me) {
         throw new AuthenticationError('You are not authenticated');
       }
+
+      // we need to look at the members at this point and see if we have them
+      // we will make them as tmp users for now in the system if not
+      // members.forEach((member) => {
+      //   const {number, name, avatar} = member;
+      //   const user = await userModel.find({number}).exec()
+      //   if (!user) {
+      //     userModel.create({
+      //       name,
+      //       number,
+      //       avatar
+      //     })
+      //   }
+      // })
+
       const chat = await chatModel.create({
         name,
         owner: me.id,

@@ -9,18 +9,18 @@ import register from '../../graph/mutations/register';
 
 export default function RegOrLogin() {
   const [runRegisterMutation, { data, loading, error }] = useMutation(register);
-  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loginView, setLoginView] = useState(true);
   const [loginRequest, setLoginRequest] = useState(null);
 
   // of we get data from the register, will return jsx for login
   const doLoginAfterRegister = data ? (
-    <GetLogin name={name} password={password} />
+    <GetLogin number={number} password={password} />
   ) : null;
 
-  async function clickRegister(name: string, password: string) {
-    await runRegisterMutation({ variables: { name, password } });
+  async function clickRegister(number: string, password: string) {
+    await runRegisterMutation({ variables: { number, password } });
   }
 
   return (
@@ -37,10 +37,10 @@ export default function RegOrLogin() {
         <View>
           <Input
             disabled={loading}
-            placeholder="username"
+            placeholder="+44 0000000"
             autoCapitalize="none"
             autoCorrect={false}
-            onChangeText={text => setName(text)}
+            onChangeText={text => setNumber(text)}
             leftIcon={
               <Ionicons
                 name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-body`}
@@ -71,11 +71,13 @@ export default function RegOrLogin() {
             disabled={loading}
             onPress={() => {
               if (loginView) {
-                setLoginRequest(<GetLogin name={name} password={password} />);
+                setLoginRequest(
+                  <GetLogin number={number} password={password} />
+                );
                 return;
               }
 
-              clickRegister(name, password);
+              clickRegister(number, password);
             }}
           >
             {loginView ? 'Login' : 'Register'}

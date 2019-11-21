@@ -35,16 +35,21 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
   const [contactsSelected, setSelectedContacts] = useState([]);
   const [search, setSearchTerm] = useState('');
 
+  const
+
   // first thing we need to do on this page is check if we need
   // permissions to get the contacts
   useEffect(() => {
     async function requestContacts() {
-      const data = await getContacts(navProps);
-      setContacts(data);
+      const phoneContacts = await getContacts(navProps);
+
+      // not we have the phone contacts we need to split them into
+      // ones in the app and ones not in the app via a query
+      setContacts(phoneContacts);
     }
 
     requestContacts();
-  }, ['contacts']);
+  }, [contacts]);
 
   // the filtering of the contacts based on search terms
   let filteredContacts = [];

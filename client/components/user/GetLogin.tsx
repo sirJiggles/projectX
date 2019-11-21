@@ -6,10 +6,10 @@ import GetCurrentUser from './GetCurrentUser';
 import login from '../../graph/queries/login';
 
 export default function GetLogin(props) {
-  const { name, password } = props;
+  const { number, password } = props;
   const { error, data, loading } = useQuery(login, {
     variables: {
-      name,
+      number,
       password
     }
   });

@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query Login($name: String!, $password: String!) {
-    login(name: $name, password: $password) {
+  query Login($number: String!, $password: String!) {
+    login(number: $number, password: $password) {
       token
     }
   }
