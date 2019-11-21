@@ -2,17 +2,11 @@ import React, { SFC, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Loading from '../loading/Loading';
 import { ListItem, Button, SearchBar } from 'react-native-elements';
-import createChatMutation from '../../graph/mutations/createChat';
-import { useMutation } from '@apollo/react-hooks';
 import * as Permissions from 'expo-permissions';
 import { NavigationInjectedProps, ScrollView } from 'react-navigation';
 import Routes from '../../enums/routes';
 import * as Contacts from 'expo-contacts';
 import PlatformSpecificIconName from '../../utils/iconName';
-
-interface CreateChatResult {
-  name?: string;
-}
 
 async function getContacts(navProps: NavigationInjectedProps) {
   const { status } = await Permissions.getAsync(Permissions.CONTACTS);
@@ -51,11 +45,6 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
 
     requestContacts();
   }, ['contacts']);
-
-  const [
-    createChat,
-    { data: chatCreated, loading: loadingCreateChat }
-  ] = useMutation<CreateChatResult>(createChatMutation);
 
   // the filtering of the contacts based on search terms
   let filteredContacts = [];
@@ -126,16 +115,16 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
       </ScrollView>
 
       <Button
-        disabled={loadingCreateChat || !contactsSelected.length}
-        onPress={async () =>
-          await createChat({
-            variables: {
-              name: 'someName',
-              members: contactsSelected
+        disabled={!contactsSelected.length}
+        onPress={() =>
+          navProps.navigation.navigate({
+            routeName: Routes.newChat,
+            params: {
+              contacts: contactsSelected
             }
           })
         }
-        title="Start"
+        title="Next"
       />
     </View>
   );

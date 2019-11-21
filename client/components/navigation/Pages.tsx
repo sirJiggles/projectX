@@ -1,6 +1,7 @@
 import Chats from '../chats/Chats';
 import Contacts from '../contacts/Contacts';
-import Chat from '../chat/Chat';
+import Chat from '../chats/Chat';
+import NewChat from '../chats/NewChat';
 // import ChatLoading from '../chat-loading/ChatLoading';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -15,12 +16,13 @@ import PlatformSpecificIconName from '../../utils/iconName';
 
 const ChatStack = createStackNavigator({
   Chats,
-  Contacts
+  Contacts,
+  NewChat
 });
 
 const TabNavigator = createBottomTabNavigator(
   {
-    ChatStack,
+    Chats: ChatStack,
     Chat
   },
   {
@@ -28,7 +30,7 @@ const TabNavigator = createBottomTabNavigator(
       tabBarIcon: ({ tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
-        if (routeName === 'ChatStack') {
+        if (routeName === 'Chats') {
           iconName = 'home';
           // Sometimes we want to add badges to some icons.
           // You can check the implementation below.

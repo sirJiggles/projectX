@@ -1,6 +1,7 @@
 enum Routes {
   contacts = 'Contacts',
-  chats = 'Chats'
+  chats = 'Chats',
+  newChat = 'NewChat'
 }
 
 export default Routes;
