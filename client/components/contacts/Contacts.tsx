@@ -8,7 +8,7 @@ import * as Permissions from 'expo-permissions';
 import { NavigationInjectedProps, ScrollView } from 'react-navigation';
 import Routes from '../../enums/routes';
 import * as Contacts from 'expo-contacts';
-import { url } from 'inspector';
+import PlatformSpecificIconName from '../../utils/iconName';
 
 interface CreateChatResult {
   name?: string;
@@ -38,7 +38,7 @@ async function getContacts(navProps: NavigationInjectedProps) {
 
 const ContactsList: SFC<NavigationInjectedProps> = navProps => {
   const [contacts, setContacts] = useState([]);
-  const [contactsSelected, addContactToChat] = useState([]);
+  const [contactsSelected, setSelectedContacts] = useState([]);
   const [search, setSearchTerm] = useState('');
 
   // first thing we need to do on this page is check if we need
@@ -68,6 +68,15 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
     filteredContacts = contacts;
   }
 
+  function toggleContact(contact: Contacts.Contact) {
+    if (contactsSelected.includes(contact)) {
+      // remove it from the list
+      setSelectedContacts(contactsSelected.filter(c => c !== contact));
+    } else {
+      setSelectedContacts([...contactsSelected, contact]);
+    }
+  }
+
   return (
     <View>
       <SearchBar
@@ -94,6 +103,19 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
                       source: {
                         uri: contact.image.uri
                       }
+                    }
+                  : null
+              }
+              onPress={() => {
+                toggleContact(contact);
+              }}
+              rightIcon={
+                contactsSelected.includes(contact)
+                  ? {
+                      name: PlatformSpecificIconName(
+                        'checkmark-circle-outline'
+                      ),
+                      type: 'ionicon'
                     }
                   : null
               }
