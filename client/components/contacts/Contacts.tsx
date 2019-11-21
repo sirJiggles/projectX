@@ -72,6 +72,7 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
     <View>
       <SearchBar
         placeholder="Contact name..."
+        lightTheme={true}
         onChangeText={term => {
           setSearchTerm(term);
         }}
