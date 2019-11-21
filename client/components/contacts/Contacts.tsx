@@ -1,11 +1,11 @@
 import React, { SFC, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Loading from '../loading/Loading';
-import { ListItem, Button } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import createChatMutation from '../../graph/mutations/createChat';
 import { useMutation } from '@apollo/react-hooks';
 import * as Permissions from 'expo-permissions';
-import { NavigationInjectedProps } from 'react-navigation';
+import { NavigationInjectedProps, ScrollView } from 'react-navigation';
 import Routes from '../../enums/routes';
 import * as Contacts from 'expo-contacts';
 import { url } from 'inspector';
@@ -38,12 +38,14 @@ async function getContacts(navProps: NavigationInjectedProps) {
 
 const ContactsList: SFC<NavigationInjectedProps> = navProps => {
   const [contacts, setContacts] = useState([]);
+  const [contactsSelected, addContactToChat] = useState([]);
+  const [search, setSearchTerm] = useState('');
+
   // first thing we need to do on this page is check if we need
   // permissions to get the contacts
   useEffect(() => {
     async function requestContacts() {
       const data = await getContacts(navProps);
-      console.log(data);
       setContacts(data);
     }
 
@@ -55,43 +57,67 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
     { data: chatCreated, loading: loadingCreateChat }
   ] = useMutation<CreateChatResult>(createChatMutation);
 
-  const loadingContacts = false;
+  // the filtering of the contacts based on search terms
+  let filteredContacts = [];
+  if (search !== '') {
+    const searchPattern = new RegExp(`(?=.*${search})`, 'i');
+    filteredContacts = contacts.filter(contact =>
+      contact.name.match(searchPattern)
+    );
+  } else {
+    filteredContacts = contacts;
+  }
+
   return (
     <View>
+      <SearchBar
+        placeholder="Contact name..."
+        onChangeText={term => {
+          setSearchTerm(term);
+        }}
+        value={search}
+      />
+
+      <ScrollView>
+        {!filteredContacts.length ? (
+          <Loading />
+        ) : (
+          filteredContacts.map((contact, i) => (
+            <ListItem
+              key={i}
+              title={contact.name}
+              subtitle={contact.nickname || ''}
+              leftAvatar={
+                contact.imageAvailable
+                  ? {
+                      source: {
+                        uri: contact.image.uri
+                      }
+                    }
+                  : null
+              }
+              bottomDivider
+            />
+          ))
+        )}
+      </ScrollView>
+
       <Button
-        disabled={loadingCreateChat}
+        disabled={loadingCreateChat || !contactsSelected.length}
         onPress={async () =>
           await createChat({
             variables: {
-              name: 'someName'
+              name: 'someName',
+              members: contactsSelected
             }
           })
         }
         title="Start"
       />
-      {loadingContacts ? (
-        <Loading />
-      ) : (
-        contacts.map((contact, i) => (
-          <ListItem
-            key={i}
-            title={contact.name}
-            subtitle={contact.nickname || ''}
-            leftAvatar={
-              contact.imageAvailable
-                ? {
-                    source: {
-                      uri: contact.image.uri
-                    }
-                  }
-                : null
-            }
-            bottomDivider
-          />
-        ))
-      )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({});
 
 export default ContactsList;
