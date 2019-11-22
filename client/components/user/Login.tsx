@@ -1,65 +1,91 @@
-import React from 'react';
-import * as CountriesAndCodes from '../../utils/CountriesAndCodes.json';
+import React, { useState, useEffect } from 'react';
+import CountriesAndCodes from '../../utils/CountriesAndCodes.json';
+import { Picker, View, Button, StyleSheet, Text } from 'react-native';
+import { Card, Input, SearchBar } from 'react-native-elements';
 
 export default function Login() {
+  // state for the login view
+  const [country, setCountry] = useState(CountriesAndCodes[0]);
+  const [number, setNumber] = useState('');
+  const [search, setSearchTerm] = useState('');
+  const [picker, setPicker] = useState(country.name);
+
+  const processing = false;
+
+  // @TODO this is where we will send the SMS
+  function sendSMS() {
+    alert('will now send the sms!');
+  }
+
+  // search on countries functionality
+  let filteredCountries = [];
+  if (search !== '') {
+    const searchPattern = new RegExp(`(?=.*${search})`, 'i');
+    filteredCountries = CountriesAndCodes.filter(country =>
+      country.name.match(searchPattern)
+    );
+  } else {
+    filteredCountries = CountriesAndCodes;
+  }
+
   return (
     <View style={styles.container}>
       <Card wrapperStyle={styles.card}>
         <View>
+          <SearchBar
+            placeholder="Country..."
+            lightTheme
+            onChangeText={term => {
+              setSearchTerm(term);
+            }}
+            value={search}
+          />
+        </View>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            mode="dropdown"
+            selectedValue={filteredCountries.indexOf(country)}
+            onValueChange={index => {
+              setCountry(filteredCountries[index]);
+            }}
+          >
+            {filteredCountries.map((countryItem, index) => {
+              return (
+                <Picker.Item
+                  label={countryItem.name}
+                  value={index}
+                  key={index}
+                />
+              );
+            })}
+          </Picker>
+        </View>
+        <View style={styles.inputsWrapper}>
           <Input
-            disabled={loading}
-            placeholder="+44 0000000"
+            disabled
+            value={country.dial_code}
+            containerStyle={styles.codeInput}
+          />
+          <Input
+            containerStyle={styles.phoneInput}
+            disabled={processing}
+            placeholder="7712345679"
             autoCapitalize="none"
             autoCorrect={false}
             onChangeText={text => setNumber(text)}
-            leftIcon={
-              <Ionicons
-                name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-body`}
-                size={24}
-                style={styles.icon}
-              />
-            }
           />
-          <Input
-            disabled={loading}
-            placeholder="password"
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            onChangeText={text => setPassword(text)}
-            leftIcon={
-              <Ionicons
-                name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-lock`}
-                size={24}
-                style={styles.icon}
-              />
-            }
-          />
-
+        </View>
+        <View>
           <Button
-            title={loginView ? 'Login' : 'Register'}
+            title="Send SMS"
             // if we are loading or there is an error we disable the button
-            disabled={loading}
+            disabled={processing}
             onPress={() => {
-              if (loginView) {
-                setLoginRequest(
-                  <GetLogin number={number} password={password} />
-                );
-                return;
-              }
-
-              clickRegister(number, password);
+              sendSMS();
             }}
           >
-            {loginView ? 'Login' : 'Register'}
+            Send SMS
           </Button>
-
-          {/* @TODO have a nice error component here */}
-          {error ? <Text>There was an error, please try again</Text> : null}
-
-          {/* some queries to login at various points */}
-          {loginRequest}
-          {doLoginAfterRegister}
         </View>
       </Card>
     </View>
@@ -67,10 +93,6 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  buttons: {
-    width: 300,
-    marginBottom: 40
-  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -79,19 +101,20 @@ const styles = StyleSheet.create({
   card: {
     width: 300
   },
-  icon: {
-    display: 'flex',
-    width: 30,
-    alignItems: 'center',
-    justifyContent: 'center'
+  pickerWrapper: {
+    marginBottom: 20
   },
-  regForm: {
+  inputsWrapper: {
     display: 'flex',
-    flexDirection: 'column',
-    alignContent: 'flex-start',
-    width: '70%'
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    marginBottom: 20
   },
-  messageInstructions: {
-    color: colors.lightContext.hex
+  codeInput: {
+    // maxWidth: 100,
+    width: 80
+  },
+  phoneInput: {
+    width: 220
   }
 });

@@ -58,9 +58,9 @@ export default {
         throw new AuthenticationError('Invalid credentials');
       }
 
-      const token = jwt.sign({ id: user.id }, 'riddlemethis', {
-        expiresIn: 24 * 10 * 50
-      });
+      // no expiry on the token is intentional so that they
+      // not need to keep logging in on the phone
+      const token = jwt.sign({ id: user.id }, 'riddlemethis');
 
       return {
         token

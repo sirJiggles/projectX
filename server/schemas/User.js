@@ -4,7 +4,7 @@ export default gql`
   type User {
     id: ID!
     avatar: String
-    name: String!
+    name: String
     number: String!
     messages: [Message!]!
     chats: [Chat!]!

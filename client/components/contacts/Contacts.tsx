@@ -35,8 +35,6 @@ const ContactsList: SFC<NavigationInjectedProps> = navProps => {
   const [contactsSelected, setSelectedContacts] = useState([]);
   const [search, setSearchTerm] = useState('');
 
-  const
-
   // first thing we need to do on this page is check if we need
   // permissions to get the contacts
   useEffect(() => {

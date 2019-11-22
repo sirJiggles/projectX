@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import RegOrLogin from '../user/RegOrLogin';
+import Login from '../user/Login';
 import Pages from '../navigation/Pages';
 import { Text, AsyncStorage, View } from 'react-native';
 import Loading from '../loading/Loading';
@@ -30,7 +30,7 @@ export default function EntryPoint() {
 
   return (
     <View style={{ paddingTop: insets.top, height: '100%' }}>
-      {data && data.currentUser ? <Pages /> : <RegOrLogin />}
+      {data && data.currentUser ? <Pages /> : <Login />}
     </View>
   );
 }
