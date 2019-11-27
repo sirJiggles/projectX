@@ -13,24 +13,23 @@ interface SMSCodeEntryProps extends ApolloProviderProps<any> {
 const SMSCodeEntry: SFC<SMSCodeEntryProps> = props => {
   const [code, setCode] = useState('');
 
-  let data, error;
+  let result, error;
 
   async function authenticateCode() {
     console.log('we are now trying to authenticate');
 
     try {
-      data = await props.client.query({
+      result = await props.client.query({
         query: authenticate,
         variables: {
           code,
           userId: props.userId
         }
       });
-      console.log(data);
-      if (data && data.authenticate) {
+      if (result?.data?.authenticate) {
         console.log('we got the authenticated message from the server');
 
-        AsyncStorage.setItem('@token', data.authenticate.token);
+        AsyncStorage.setItem('@token', result.data.authenticate.token);
 
         // now we set the token we need to login, again with client query
         props.client.query({
@@ -51,7 +50,7 @@ const SMSCodeEntry: SFC<SMSCodeEntryProps> = props => {
         <Divider />
         <Button
           title="Authenticate"
-          disabled={data && data.loading}
+          disabled={result?.data?.loading}
           onPress={() => {
             authenticateCode();
           }}

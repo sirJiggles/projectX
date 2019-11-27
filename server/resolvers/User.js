@@ -26,7 +26,35 @@ function GenerateCode(length) {
     string += range.charAt(Math.floor(Math.random() * range.length));
   }
 
-  return parseInt(string);
+  return parseFloat(string);
+}
+
+function sendSMS(number, code) {
+  const text = `<#> Your auth code is: ${code}
+      It will expire in ${EXPIRY_TIME_MINS} mins ⏱
+    `;
+
+  nexmo.message.sendSms(
+    'Frank',
+    number,
+    text,
+    {
+      type: 'unicode'
+    },
+    (err, responseData) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (responseData.messages[0]['status'] === '0') {
+          console.log('Message sent successfully.');
+        } else {
+          console.log(
+            `Message failed with error: ${responseData.messages[0]['error-text']}`
+          );
+        }
+      }
+    }
+  );
 }
 
 export default {
@@ -54,26 +82,20 @@ export default {
     authenticate: async (
       parent,
       { code, userId },
-      { models: { userModel } },
+      { models: { authCodeModel } },
       info
     ) => {
       if (!userId) {
         throw new AuthenticationError('No user passed to get auth code');
       }
 
-      const user = await userModel.findById({ _id: userId }).exec();
+      const authCode = await authCodeModel.findOne({ user: userId }).exec();
 
-      if (!user) {
+      if (!authCode) {
         throw new AuthenticationError(
-          'could not find the user by the ID passed'
+          'could not find the auth code for the user ID'
         );
       }
-
-      const authCode = user.authcode;
-
-      console.log(user);
-
-      console.log(user.authcode);
 
       if (authCode.code !== code) {
         throw new AuthenticationError('code does not match');
@@ -88,7 +110,7 @@ export default {
 
       // no expiry on the token is intentional so that they
       // not need to keep logging in on the phone
-      const token = jwt.sign({ id: user.id }, 'riddlemethis');
+      const token = jwt.sign({ id: userId }, 'riddlemethis');
 
       return {
         token
@@ -118,7 +140,13 @@ export default {
       }
 
       // if the user already has an auth code, remove it / them all
-      if (user.authcode) {
+      const existingCodes = user.authcodes;
+
+      if (existingCodes.length > 0) {
+        console.log(
+          'there are some existing auth codes already:',
+          existingCodes
+        );
         await authCodeModel.delete({ user });
       }
 
@@ -137,34 +165,12 @@ export default {
         );
       }
 
-      // let text = `<#> Your auth code is: ${code}
-      //   It will expire in ${EXPIRY_TIME_MINS} mins ⏱
-      // `;
-
-      // nexmo.message.sendSms(
-      //   'Frank',
-      //   number,
-      //   text,
-      //   {
-      //     type: 'unicode'
-      //   },
-      //   (err, responseData) => {
-      //     if (err) {
-      //       console.log(err);
-      //     } else {
-      //       if (responseData.messages[0]['status'] === '0') {
-      //         console.log('Message sent successfully.');
-      //       } else {
-      //         console.log(
-      //           `Message failed with error: ${responseData.messages[0]['error-text']}`
-      //         );
-      //       }
-      //     }
-      //   }
-      // );
-
-      // for now we will just log the code and not send it
-      console.log(code);
+      if (process.env.MODE !== 'development') {
+        sendSMS(number, code);
+      } else {
+        // in dev mode we will just echo out the code to the console
+        console.log(code);
+      }
 
       return user;
     }
@@ -180,9 +186,9 @@ export default {
 
       return [...myChats, ...chatsIAmIn];
     },
-    authcode: async ({ code }, args, { models: { authCodeModel } }, info) => {
-      const authCode = await authCodeModel.findById({ _id: code });
-      return authCode;
+    authcodes: async ({ id }, args, { models: { authCodeModel } }, info) => {
+      const authCodes = await authCodeModel.find({ user: id });
+      return authCodes;
     }
   }
 };

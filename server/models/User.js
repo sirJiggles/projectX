@@ -27,16 +27,13 @@ const userSchema = new mongoose.Schema({
       ref: 'chat'
     }
   ],
-  authcode: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'authcode'
-  }
+  authcodes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'authcode'
+    }
+  ]
 });
-
-// userSchema.pre('save', function() {
-//   const hashedPassword = bcrypt.hashSync(this.password, 12);
-//   this.password = hashedPassword;
-// });
 
 const user = mongoose.model('user', userSchema);
 
