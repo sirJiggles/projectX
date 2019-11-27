@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
       ref: 'chat'
     }
   ],
-  code: {
+  authcode: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'authcode'
   }

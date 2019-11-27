@@ -69,9 +69,13 @@ export default {
         );
       }
 
-      const authCode = user.code;
+      const authCode = user.authcode;
 
-      if (authCode !== code) {
+      console.log(user);
+
+      console.log(user.authcode);
+
+      if (authCode.code !== code) {
         throw new AuthenticationError('code does not match');
       }
 
@@ -114,7 +118,7 @@ export default {
       }
 
       // if the user already has an auth code, remove it / them all
-      if (user.code) {
+      if (user.authcode) {
         await authCodeModel.delete({ user });
       }
 
@@ -176,7 +180,7 @@ export default {
 
       return [...myChats, ...chatsIAmIn];
     },
-    code: async ({ code }, args, { models: { authCodeModel } }, info) => {
+    authcode: async ({ code }, args, { models: { authCodeModel } }, info) => {
       const authCode = await authCodeModel.findById({ _id: code });
       return authCode;
     }

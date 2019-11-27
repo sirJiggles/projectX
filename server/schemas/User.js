@@ -8,7 +8,7 @@ export default gql`
     number: String!
     messages: [Message!]!
     chats: [Chat!]!
-    code: AuthCode
+    authcode: AuthCode!
   }
 
   input UserInput {

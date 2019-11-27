@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, ApolloConsumer } from '@apollo/react-hooks';
 import getSMSCode from '../../graph/mutations/getSMSCode';
 import LoginForm from './LoginForm';
 import SMSCodeEntry from './SMSCodeEntry';
@@ -19,6 +19,8 @@ export default function Login() {
   return !data ? (
     <LoginForm disabled={loading} sendSMS={sendSMS} error={error} />
   ) : (
-    <SMSCodeEntry userId={data.getSMSCode.id} />
+    <ApolloConsumer>
+      {client => <SMSCodeEntry userId={data.getSMSCode.id} client={client} />}
+    </ApolloConsumer>
   );
 }

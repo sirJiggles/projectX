@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import Login from '../user/Login';
 import Pages from '../navigation/Pages';
-import { Text, AsyncStorage, View } from 'react-native';
+import { AsyncStorage, View } from 'react-native';
 import Loading from '../loading/Loading';
 import currentUser from '../../graph/queries/currentUser';
 import { useSafeArea } from 'react-native-safe-area-context';
