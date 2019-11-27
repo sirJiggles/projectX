@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CountriesAndCodes from '../../utils/CountriesAndCodes.json';
-import { Picker, View, Button, StyleSheet, Text } from 'react-native';
+import { Picker, View, Button, StyleSheet } from 'react-native';
 import { Card, Input, SearchBar } from 'react-native-elements';
 
 export default function Login() {
@@ -8,12 +8,13 @@ export default function Login() {
   const [country, setCountry] = useState(CountriesAndCodes[0]);
   const [number, setNumber] = useState('');
   const [search, setSearchTerm] = useState('');
-  const [picker, setPicker] = useState(country.name);
 
   const processing = false;
 
   // @TODO this is where we will send the SMS
-  function sendSMS() {
+  async function sendSMS() {
+    const { data, error } = useQuery(getSMSCode);
+
     alert('will now send the sms!');
   }
 
@@ -43,7 +44,6 @@ export default function Login() {
         </View>
         <View style={styles.pickerWrapper}>
           <Picker
-            mode="dropdown"
             selectedValue={filteredCountries.indexOf(country)}
             onValueChange={index => {
               setCountry(filteredCountries[index]);
@@ -77,11 +77,11 @@ export default function Login() {
         </View>
         <View>
           <Button
+            disabled={number === ''}
             title="Send SMS"
             // if we are loading or there is an error we disable the button
-            disabled={processing}
-            onPress={() => {
-              sendSMS();
+            onPress={async () => {
+              await sendSMS();
             }}
           >
             Send SMS
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 50
   },
   card: {
     width: 300

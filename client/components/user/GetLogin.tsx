@@ -3,7 +3,7 @@ import { Text, AsyncStorage } from 'react-native';
 import { useQuery } from '@apollo/react-hooks';
 import Loading from '../loading/Loading';
 import GetCurrentUser from './GetCurrentUser';
-import login from '../../graph/queries/login';
+import login from '../../graph/queries/authenticate';
 
 export default function GetLogin(props) {
   const { number, password } = props;

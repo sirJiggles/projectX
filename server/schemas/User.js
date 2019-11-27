@@ -8,6 +8,7 @@ export default gql`
     number: String!
     messages: [Message!]!
     chats: [Chat!]!
+    code: AuthCode
   }
 
   input UserInput {
@@ -24,10 +25,7 @@ export default gql`
     user(id: ID!): User!
     users(numbers: [String!]!): [User]!
     currentUser: User
-    login(number: String!, password: String!): Token!
-  }
-
-  extend type Mutation {
-    createUser(number: String!, password: String!): User!
+    authenticate(code: String!, userId: String!): Token!
+    getSMSCode(number: String!): User!
   }
 `;

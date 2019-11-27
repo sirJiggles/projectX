@@ -15,10 +15,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  password: {
-    type: String,
-    required: true
-  },
   messages: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,13 +26,17 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'chat'
     }
-  ]
+  ],
+  code: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'authcode'
+  }
 });
 
-userSchema.pre('save', function() {
-  const hashedPassword = bcrypt.hashSync(this.password, 12);
-  this.password = hashedPassword;
-});
+// userSchema.pre('save', function() {
+//   const hashedPassword = bcrypt.hashSync(this.password, 12);
+//   this.password = hashedPassword;
+// });
 
 const user = mongoose.model('user', userSchema);
 

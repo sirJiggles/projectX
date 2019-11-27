@@ -1,6 +1,7 @@
 import userSchema from './User';
 import messageSchema from './Message';
 import chatSchema from './Chat';
+import authCodeSchema from './AuthCode';
 import { gql } from 'apollo-server';
 
 const linkSchema = gql`
@@ -15,4 +16,10 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, chatSchema, userSchema, messageSchema];
+export default [
+  linkSchema,
+  chatSchema,
+  userSchema,
+  messageSchema,
+  authCodeSchema
+];
