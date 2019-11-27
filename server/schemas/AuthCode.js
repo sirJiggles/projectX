@@ -4,7 +4,7 @@ export default gql`
   type AuthCode {
     id: ID!
     code: String!
-    expiry: Date!
+    expiry: String!
     user: User!
   }
 `;

@@ -7,7 +7,7 @@ const AuthCodeSchema = new mongoose.Schema({
     required: true
   },
   expiry: {
-    type: Date,
+    type: String,
     required: true
   },
   user: {
@@ -16,6 +16,6 @@ const AuthCodeSchema = new mongoose.Schema({
   }
 });
 
-const authcode = mongoose.model('authcode', userSchema);
+const authcode = mongoose.model('authcode', AuthCodeSchema);
 
 export default authcode;
