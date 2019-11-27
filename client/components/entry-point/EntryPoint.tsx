@@ -5,11 +5,8 @@ import Pages from '../navigation/Pages';
 import { AsyncStorage, View } from 'react-native';
 import Loading from '../loading/Loading';
 import currentUser from '../../graph/queries/currentUser';
-import { useSafeArea } from 'react-native-safe-area-context';
 
 export default function EntryPoint() {
-  const insets = useSafeArea();
-
   // @TODO remove this as we can keep the session if we like
   // later we just need to be better at clearing it
   // AsyncStorage.removeItem('@token');
@@ -28,9 +25,5 @@ export default function EntryPoint() {
     refetch();
   }
 
-  return (
-    <View style={{ paddingTop: insets.top, height: '100%' }}>
-      {data && data.currentUser ? <Pages /> : <Login />}
-    </View>
-  );
+  return data?.currentUser ? <Pages /> : <Login />;
 }

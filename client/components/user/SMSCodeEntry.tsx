@@ -16,8 +16,6 @@ const SMSCodeEntry: SFC<SMSCodeEntryProps> = props => {
   let result, error;
 
   async function authenticateCode() {
-    console.log('we are now trying to authenticate');
-
     try {
       result = await props.client.query({
         query: authenticate,
@@ -27,8 +25,6 @@ const SMSCodeEntry: SFC<SMSCodeEntryProps> = props => {
         }
       });
       if (result?.data?.authenticate) {
-        console.log('we got the authenticated message from the server');
-
         AsyncStorage.setItem('@token', result.data.authenticate.token);
 
         // now we set the token we need to login, again with client query
