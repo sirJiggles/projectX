@@ -26,6 +26,9 @@ export default gql`
     users(numbers: [String!]!): [User]!
     currentUser: User
     authenticate(code: String!, userId: String!): Token!
+  }
+
+  extend type Mutation {
     getSMSCode(number: String!): User!
   }
 `;

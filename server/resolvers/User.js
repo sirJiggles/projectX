@@ -51,77 +51,6 @@ export default {
       }
       return me;
     },
-    getSMSCode: async (
-      parent,
-      { number },
-      { models: { userModel, authCodeModel } },
-      info
-    ) => {
-      // we look for the user with the number, if we do not have it then
-      // let's create one and store the code there
-      let user = await userModel.findOne({ number }).exec();
-
-      if (!user) {
-        user = await userModel.create({
-          number
-        });
-        if (!user) {
-          throw new AuthenticationError(
-            'could not create a user with that number, must be taken'
-          );
-        }
-      }
-
-      // if the user already has an auth code, remove it / them all
-      if (user.code) {
-        await authCodeModel.delete({ user });
-      }
-
-      const code = GenerateCode(4);
-
-      // make the auth code entry for the user to validate and send the sms message
-      const authCode = await authCodeModel.create({
-        code,
-        user,
-        expiry: addMinutes(new Date().toISOString(), EXPIRY_TIME_MINS)
-      });
-
-      if (!authCode) {
-        throw new AuthenticationError(
-          'could not make the auth code entry for said user'
-        );
-      }
-
-      let text = `<#> Your auth code is: ${code}
-        It will expire in ${EXPIRY_TIME_MINS} mins ⏱
-      `;
-
-      nexmo.message.sendSms(
-        'Frank',
-        number,
-        text,
-        {
-          type: 'unicode'
-        },
-        (err, responseData) => {
-          if (err) {
-            console.log(err);
-          } else {
-            if (responseData.messages[0]['status'] === '0') {
-              console.log('Message sent successfully.');
-            } else {
-              console.log(
-                `Message failed with error: ${responseData.messages[0]['error-text']}`
-              );
-            }
-          }
-        }
-      );
-
-      return {
-        user
-      };
-    },
     authenticate: async (
       parent,
       { code, userId },
@@ -160,6 +89,80 @@ export default {
       return {
         token
       };
+    }
+  },
+  Mutation: {
+    getSMSCode: async (
+      parent,
+      { number },
+      { models: { userModel, authCodeModel } },
+      info
+    ) => {
+      // we look for the user with the number, if we do not have it then
+      // let's create one and store the code there
+      let user = await userModel.findOne({ number }).exec();
+
+      if (!user) {
+        user = await userModel.create({
+          number
+        });
+        if (!user) {
+          throw new AuthenticationError(
+            'could not create a user with that number, must be taken'
+          );
+        }
+      }
+
+      // if the user already has an auth code, remove it / them all
+      if (user.code) {
+        await authCodeModel.delete({ user });
+      }
+
+      const code = GenerateCode(4);
+
+      // make the auth code entry for the user to validate and send the sms message
+      const authCode = await authCodeModel.create({
+        code,
+        user,
+        expiry: addMinutes(new Date(), EXPIRY_TIME_MINS).toISOString()
+      });
+
+      if (!authCode) {
+        throw new AuthenticationError(
+          'could not make the auth code entry for said user'
+        );
+      }
+
+      // let text = `<#> Your auth code is: ${code}
+      //   It will expire in ${EXPIRY_TIME_MINS} mins ⏱
+      // `;
+
+      // nexmo.message.sendSms(
+      //   'Frank',
+      //   number,
+      //   text,
+      //   {
+      //     type: 'unicode'
+      //   },
+      //   (err, responseData) => {
+      //     if (err) {
+      //       console.log(err);
+      //     } else {
+      //       if (responseData.messages[0]['status'] === '0') {
+      //         console.log('Message sent successfully.');
+      //       } else {
+      //         console.log(
+      //           `Message failed with error: ${responseData.messages[0]['error-text']}`
+      //         );
+      //       }
+      //     }
+      //   }
+      // );
+
+      // for now we will just log the code and not send it
+      console.log(code);
+
+      return user;
     }
   },
   User: {
